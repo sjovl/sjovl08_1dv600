@@ -2,19 +2,17 @@
   "name": "hangman",
   "version": "1.0.0",
   "description": "A game of Hangman",
-  "main": "./src/app.js",
+  "main": "app.js",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/app.js"
+    "start": "node app.js"
   },
   "author": "Simon Jonsson",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^1.18.9",
-    "path": "^0.12.7",
     "snazzy": "^8.0.0",
     "standard": "^12.0.1"
   },
