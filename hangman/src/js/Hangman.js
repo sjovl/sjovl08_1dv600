@@ -3,19 +3,36 @@ const readline = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout
 })
-
+/**
+ * Class for handling a game of Hangman
+ * @class Hangman
+ */
 class Hangman {
   constructor () {
     this.letters = []
     this.randomWord = randomWord
-    this.currentWord = []
+    this.currentWord = {
+      word: '',
+      solved: false
+    }
     this.readline = readline
-    this.player1 = ''
-    this.player2 = ''
+    this.player1 = {
+      name: ''
+    }
+    this.player2 = {
+      name: '',
+      multiplayer: false
+    }
   }
+  /**
+   * Initiate the game by calling for setOption method
+   */
   init () {
     this.setOption()
   }
+  /**
+   * Set options for game
+   */
   setOption () {
     console.log('1. Set nickname')
     console.log('2. Change to two players')
@@ -30,38 +47,77 @@ class Hangman {
         this.setWord()
       } else if (choice === '4') {
         this.quitGame()
+      } else {
+        console.log('Wrong input')
       }
     })
   }
+  /**
+   * Set the word to be guessed
+   */
   setWord () {
-    let underScore = '_ '
-    this.currentWord = this.randomWord()
-    console.log(this.currentWord)
-    console.log(underScore.repeat(this.currentWord.length))
+    let underScore = '_'
+    this.currentWord.word = Array.from(this.randomWord())
+    console.log(this.currentWord.word)
+    console.log(underScore.repeat(this.currentWord.word.length))
     this.guess()
   }
+  /**
+   * Method for setting nickname
+   */
   setNickname () {
-    readline.question('Choose your nickname: ', (nick) => {
-      this.player1 = nick
+    readline.question('Player 1 choose your nickname: ', (nick) => {
+      this.player1.name = nick
 
       console.log('\n')
       console.log(`Welcome ${nick}`)
+
       this.setOption()
     })
   }
+  /**
+   * Method for starting the game
+   */
   startGame () {
     this.setWord()
   }
-
+  /**
+   * Method for handling guesses
+   */
   guess () {
+    console.log(this.letters)
     readline.question('Guess a letter: ', (letter) => {
       this.letters.push(letter)
+      this.currentWord.word.forEach(symbol => {
+        if (symbol === letter) {
+          console.log('match!')
+        }
+      })
+      this.checkSolved()
     })
   }
+  checkSolved () {
+    if (this.currentWord.solved === false) {
+      this.guess()
+    }
+  }
+  /**
+   * Method for quitting game
+   */
   quitGame () {
     readline.close()
   }
+  /**
+   * Method for multiplayer option
+   */
   twoPlayers () {
+    readline.question('Set nickname for Player 2: ', (nickname) => {
+      this.player2.name = nickname
+      this.player2.multiplayer = true
+      console.log('\n')
+      console.log(`Welcome ${nickname}`)
+      this.setOption()
+    })
   }
 }
 
