@@ -1,3 +1,5 @@
+'use strict'
+
 const randomWord = require('random-words')
 const readline = require('readline').createInterface({
   input: process.stdin,
@@ -41,10 +43,15 @@ class Hangman {
    */
   setOption () {
     this.currentPlayer = this.player1
-    console.log('1. Set nickname')
-    console.log('2. Change to two players')
-    console.log('3. Start Game')
-    console.log('4. Quit game')
+    this.logExceptOnTest('1. Set nickname')
+    this.logExceptOnTest('2. Change to two players')
+    this.logExceptOnTest('3. Start Game')
+    this.logExceptOnTest('4. Quit game')
+    if (process.env.NODE_ENV !== 'test') {
+      this.makeMenuChoice()
+    }
+  }
+  makeMenuChoice () {
     readline.question('Make a choice: ', (choice) => {
       if (choice === '1') {
         this.setNickname()
@@ -71,8 +78,8 @@ class Hangman {
     let underScore = '_'
     this.currentWord.word = Array.from(this.randomWord())
     this.progress = Array.from(underScore.repeat(this.currentWord.word.length))
-    console.log(this.progress.join(' '))
-    this.guess()
+    this.logExceptOnTest(this.progress.join(' '))
+    return this.currentWord.word
   }
   /**
    * Method for setting nickname
@@ -99,6 +106,7 @@ class Hangman {
 
     console.log('Welcome to the game of Hangman! Start by guessing a letter')
     this.setWord()
+    this.guess()
   }
   /**
    * Method for handling guesses
@@ -145,7 +153,6 @@ class Hangman {
       })
     }
     if (this.currentWord.solved === false) {
-      // this.currentPlayer.guesses--
       this.guess()
     }
   }
@@ -153,7 +160,11 @@ class Hangman {
    * Method for quitting game
    */
   quitGame () {
-    readline.close()
+    try {
+      readline.close()
+    } catch (err) {
+      throw new TypeError('ERROR: Could not quit the game')
+    }
   }
   /**
    * Method for multiplayer option
@@ -178,6 +189,19 @@ class Hangman {
           this.setOption()
         }
       })
+    }
+  }
+  logExceptOnTest (string) {
+    if (process.env.NODE_ENV !== 'test') {
+      console.log(string)
+    }
+    return string
+  }
+  failingTest (evenValue) {
+    if (evenValue % 2 === 1) {
+      return false
+    } else {
+      return true
     }
   }
 }
